@@ -1,0 +1,60 @@
+package com.challengers.userservice.service;
+
+import com.challengers.userservice.common.exception.BadRequestException;
+import com.challengers.userservice.common.exception.UserException;
+import com.challengers.userservice.domain.AuthProvider;
+import com.challengers.userservice.domain.Role;
+import com.challengers.userservice.domain.User;
+import com.challengers.userservice.dto.AuthDto;
+import com.challengers.userservice.dto.LogInRequest;
+import com.challengers.userservice.dto.TokenDto;
+import com.challengers.userservice.repository.UserRepository;
+import com.challengers.userservice.security.TokenProvider;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import javax.transaction.Transactional;
+import javax.validation.Valid;
+
+@Service
+@RequiredArgsConstructor
+public class AuthService {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
+
+    @Transactional
+    public ResponseEntity<String> signUp(@Valid @RequestBody AuthDto authDto) {
+        if(userRepository.existsByEmail(authDto.getEmail())) {
+            throw new BadRequestException("Email address already in use.");
+        }
+
+        userRepository.save(User.builder()
+                .name(authDto.getName())
+                .email(authDto.getEmail())
+                .provider(AuthProvider.local)
+                .password(passwordEncoder.encode(authDto.getPassword()))
+                .image(User.DEFAULT_IMAGE_URL)
+                .role(Role.USER)
+                .build()
+        );
+
+        return new ResponseEntity<String>("회원 가입이 성공적으로 완료되었습니다!", HttpStatus.CREATED);
+    }
+
+    @Transactional
+    public ResponseEntity<TokenDto> signIn(@Valid @RequestBody LogInRequest logInRequest) {
+        User user = userRepository.findByEmail(logInRequest.getEmail()).orElseThrow(UserException::new);
+
+        String jwt = tokenProvider.createTokenByUserEntity(user);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Authorization", "Bearer " + jwt);
+
+        return new ResponseEntity<>(new TokenDto("Bearer " + jwt), httpHeaders, HttpStatus.OK);
+    }
+}

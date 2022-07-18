@@ -49,6 +49,23 @@ spring:
             - AuthorizationHeaderFilter
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
 
+        - id: challenge-service # 비 로그인 사용자
+          uri: lb://CHALLENGE-SERVICE
+          predicates:
+            - Path=/challenge-service/api/challenge/**
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/challenge-service/(?<segment>.*), /$\{segment}
+        - id: challenge-service # 로그인 사용자
+          uri: lb://CHALLENGE-SERVICE
+          predicates:
+            - Path=/challenge-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - AuthorizationHeaderFilter
+            - RewritePath=/challenge-service/(?<segment>.*), /$\{segment}
+
 token:
   accessTokenSecret: 04ca023b39512e46d0c2cf4b48d5aac61d34302994c87ed4eff225dcf3b0a218739f3897051a057f9b846a69ea2927a587044164b7bae5e1306219d50b588cb1
   accessTokenExpirationMsec: 3600000 #1000*60*60 1시간

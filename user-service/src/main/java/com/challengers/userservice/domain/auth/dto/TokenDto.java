@@ -1,4 +1,4 @@
-package com.challengers.userservice.dto;
+package com.challengers.userservice.domain.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.challengers.userservice.security;
+package com.challengers.userservice.common.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

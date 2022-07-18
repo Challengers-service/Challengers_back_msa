@@ -1,5 +1,5 @@
 server:
-  port: 0 # ?? ??
+  port: 0
 
 spring:
   application:
@@ -24,7 +24,7 @@ spring:
 
 eureka:
   instance:
-    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}  # ????? 0?? ?? ???? ??? ??? ??? ?? ????? ??? ? ??? instance-id ?? ??? ???? ????
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
     hostname: ${spring.cloud.client.ip-address}
     lease-renewal-interval-in-seconds: 1
     lease-expiration-duration-in-seconds: 2
@@ -42,7 +42,3 @@ logging:
 token:
   accessTokenSecret: 04ca023b39512e46d0c2cf4b48d5aac61d34302994c87ed4eff225dcf3b0a218739f3897051a057f9b846a69ea2927a587044164b7bae5e1306219d50b588cb1
   accessTokenExpirationMsec: 3600000 #1000*60*60 1시간
-
-security:
-  basic:
-    enabled=false

@@ -1,4 +1,4 @@
-package com.challengers.userservice.domain;
+package com.challengers.userservice.domain.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -49,6 +46,12 @@ public class User {
     private AuthProvider provider;
 
     private String providerId;
+
+    public void update(String name, String bio, String image){
+        this.name = name;
+        this.bio = bio;
+        this.image = (image.equals(""))? User.DEFAULT_IMAGE_URL : image;
+    }
 
     @Builder
     public User(Long id, String name, String email, String image, String bio, String password, Role role, AuthProvider provider, String providerId

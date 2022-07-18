@@ -1,6 +1,6 @@
-package com.challengers.userservice.security;
+package com.challengers.userservice.common.security;
 
-import com.challengers.userservice.domain.User;
+import com.challengers.userservice.domain.user.entity.User;
 import io.jsonwebtoken.*;
 
 import org.slf4j.Logger;

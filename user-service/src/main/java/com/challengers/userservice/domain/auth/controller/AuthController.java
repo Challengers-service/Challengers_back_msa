@@ -1,9 +1,9 @@
-package com.challengers.userservice.controller;
+package com.challengers.userservice.domain.auth.controller;
 
-import com.challengers.userservice.dto.AuthDto;
-import com.challengers.userservice.dto.LogInRequest;
-import com.challengers.userservice.dto.TokenDto;
-import com.challengers.userservice.service.AuthService;
+import com.challengers.userservice.domain.auth.dto.AuthDto;
+import com.challengers.userservice.domain.auth.dto.LogInRequest;
+import com.challengers.userservice.domain.auth.dto.TokenDto;
+import com.challengers.userservice.domain.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,5 +1,5 @@
 server:
-  port: 8000
+  port: 8080
 eureka:
   instance:
     hostname: ${spring.cloud.client.ip-address}
@@ -11,10 +11,22 @@ eureka:
 spring:
   application:
     name: apigateway-service
-#  cloud:
-#    gateway:
-#      routes:
-#        - id: first-service
-#          uri: http://localhost:8081/
-#          predicates:
-#            - Path=/first-service/**
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/api/signin
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/api/signup
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}

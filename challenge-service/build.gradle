@@ -1,0 +1,94 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.1'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id "org.asciidoctor.jvm.convert" version "3.3.2"
+}
+
+group = 'com.challengers'
+version = '1.0_' + new Date().format("yyyy-MM-dd_HH-mm-ss")
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	asciidoctorExt
+}
+
+jar{
+	enabled = false
+	archiveClassifier = ''
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	snippetsDir = file('build/generated-snippets')
+	set('springCloudVersion', "2021.0.3")
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	//h2
+	runtimeOnly group: 'com.h2database',name : 'h2', version: '1.3.176'
+	implementation 'org.mariadb.jdbc:mariadb-java-client'
+
+	//validate
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	//s3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.3'
+
+	//rest docs
+	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+	outputs.dir snippetsDir
+}
+
+tasks.named('asciidoctor') { // asciidoctor task의 input은 snippetsDir(스니펫 저장 위치) 입니다.
+	inputs.dir snippetsDir
+	configurations 'asciidoctorExt'
+	dependsOn test
+}
+
+bootJar {
+	dependsOn asciidoctor
+	finalizedBy 'copyDocument'
+}
+
+task copyDocument(type: Copy) {
+	dependsOn bootJar
+	from file("build/docs/asciidoc")
+	into file("src/main/resources/static/docs")
+}
+
+asciidoctor.doFirst {
+	delete file('src/main/resources/static/docs')
+}
+
+build {
+	dependsOn copyDocument
+}

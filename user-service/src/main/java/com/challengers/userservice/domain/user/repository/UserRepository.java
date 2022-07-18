@@ -1,6 +1,6 @@
-package com.challengers.userservice.repository;
+package com.challengers.userservice.domain.user.repository;
 
-import com.challengers.userservice.domain.User;
+import com.challengers.userservice.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

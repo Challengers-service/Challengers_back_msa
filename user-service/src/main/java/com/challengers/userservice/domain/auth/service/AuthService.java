@@ -1,15 +1,15 @@
-package com.challengers.userservice.service;
+package com.challengers.userservice.domain.auth.service;
 
 import com.challengers.userservice.common.exception.BadRequestException;
 import com.challengers.userservice.common.exception.UserException;
-import com.challengers.userservice.domain.AuthProvider;
-import com.challengers.userservice.domain.Role;
-import com.challengers.userservice.domain.User;
-import com.challengers.userservice.dto.AuthDto;
-import com.challengers.userservice.dto.LogInRequest;
-import com.challengers.userservice.dto.TokenDto;
-import com.challengers.userservice.repository.UserRepository;
-import com.challengers.userservice.security.TokenProvider;
+import com.challengers.userservice.domain.user.entity.AuthProvider;
+import com.challengers.userservice.domain.user.entity.Role;
+import com.challengers.userservice.domain.user.entity.User;
+import com.challengers.userservice.common.security.TokenProvider;
+import com.challengers.userservice.domain.auth.dto.AuthDto;
+import com.challengers.userservice.domain.auth.dto.LogInRequest;
+import com.challengers.userservice.domain.auth.dto.TokenDto;
+import com.challengers.userservice.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.challengers.userservice.domain;
+package com.challengers.userservice.domain.user.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

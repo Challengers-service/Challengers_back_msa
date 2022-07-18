@@ -1,4 +1,4 @@
-package com.challengers.userservice.dto;
+package com.challengers.userservice.domain.auth.dto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -9,17 +9,25 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @NoArgsConstructor
-public class LogInRequest {
-    @NotBlank
+public class AuthDto {
     @Email
+    @NotBlank
     private String email;
+
+    @NotBlank
+    private String name;
 
     @NotBlank
     private String password;
 
+    @NotBlank
+    private String passwordConfirm;
+
     @Builder
-    public LogInRequest(String email, String password) {
+    public AuthDto(String email, String name, String password, String passwordConfirm) {
         this.email = email;
+        this.name = name;
         this.password = password;
+        this.passwordConfirm = passwordConfirm;
     }
 }

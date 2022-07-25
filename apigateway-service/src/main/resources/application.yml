@@ -57,6 +57,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/challenge-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderAnonymousFilter
         - id: challenge-service # 로그인 사용자
           uri: lb://CHALLENGE-SERVICE
           predicates:

@@ -15,9 +15,9 @@ public class ChallengePhotoController {
     @PostMapping("/{challenge_id}")
     public ResponseEntity<Void> addChallengePhoto(@ModelAttribute ChallengePhotoRequest challengePhotoRequest,
                                                   @PathVariable(name = "challenge_id") Long challengeId,
-                                                  @RequestHeader(value = "userId") String userId) {
-        challengePhotoService.upload(challengePhotoRequest, challengeId, Long.parseLong(userId));
+                                                  @RequestHeader(value = "userId") Long userId) {
 
+        challengePhotoService.upload(challengePhotoRequest, challengeId, userId);
         return ResponseEntity.ok().build();
 
     }

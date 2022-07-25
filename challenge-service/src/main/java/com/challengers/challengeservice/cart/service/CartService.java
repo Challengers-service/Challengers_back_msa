@@ -17,6 +17,8 @@ public class CartService {
 
     public void put(Long challengeId, Long userId) {
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(NoSuchElementException::new);
+        if (cartRepository.findByChallengeIdAndUserId(challengeId,userId).isPresent())
+            throw new RuntimeException("이미 찜하기가 되어 있습니다.");
 
         cartRepository.save(Cart.create(challenge,userId));
     }

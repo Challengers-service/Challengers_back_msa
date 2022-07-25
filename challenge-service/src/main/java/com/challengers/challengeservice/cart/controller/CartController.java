@@ -13,18 +13,17 @@ public class CartController {
 
     @PostMapping("/{challenge_id}")
     public ResponseEntity<Void> addCart(@PathVariable(name = "challenge_id") Long challengeId,
-                                        @RequestHeader(value = "userId") String userId) {
-        cartService.put(challengeId, Long.parseLong(userId));
+                                        @RequestHeader(value = "userId") Long userId) {
 
+        cartService.put(challengeId, userId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{challenge_id}")
     public ResponseEntity<Void> deleteCart(@PathVariable(name = "challenge_id") Long challengeId,
-                                           @RequestHeader(value = "userId") String userId) {
+                                           @RequestHeader(value = "userId") Long userId) {
 
-        cartService.takeOut(challengeId, Long.parseLong(userId));
-
+        cartService.takeOut(challengeId, userId);
         return ResponseEntity.ok().build();
     }
 

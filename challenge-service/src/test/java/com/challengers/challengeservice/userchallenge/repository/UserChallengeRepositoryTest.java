@@ -1,6 +1,7 @@
 package com.challengers.challengeservice.userchallenge.repository;
 
 import com.challengers.challengeservice.challenge.domain.Challenge;
+import com.challengers.challengeservice.challenge.dto.ChallengeSearchCondition;
 import com.challengers.challengeservice.challenge.repository.ChallengeRepository;
 import com.challengers.challengeservice.photocheck.domain.PhotoCheck;
 import com.challengers.challengeservice.photocheck.repository.PhotoCheckRepository;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -25,22 +28,35 @@ class UserChallengeRepositoryTest {
     @Autowired
     PhotoCheckRepository photoCheckRepository;
 
-    Challenge challenge;
-
+    Challenge challenge1;
+    Challenge challenge2;
     @BeforeEach
     void setUp() {
-        challenge = Challenge.builder()
+        challenge1 = Challenge.builder()
+                .id(1L)
+                .name("매일 아침 7시 기상")
                 .startDate(LocalDate.now().plusDays(1))
                 .endDate(LocalDate.now().plusDays(10))
                 .checkTimesPerRound(1)
+                .userCount(1)
                 .build();
-        challengeRepository.save(challenge);
+        challengeRepository.save(challenge1);
+
+        challenge2 = Challenge.builder()
+                .id(2L)
+                .name("매일")
+                .startDate(LocalDate.now().plusDays(1))
+                .endDate(LocalDate.now().plusDays(10))
+                .checkTimesPerRound(1)
+                .userCount(2)
+                .build();
+        challengeRepository.save(challenge2);
 
     }
 
     @Test
     void findAllFail() {
-        UserChallenge userChallenge = UserChallenge.create(challenge, 1L);
+        UserChallenge userChallenge = UserChallenge.create(challenge1, 1L);
         userChallengeRepository.save(userChallenge);
 
         List<PhotoCheck> photoChecks = userChallenge.getPhotoChecks();
@@ -53,20 +69,4 @@ class UserChallengeRepositoryTest {
         Assertions.assertThat(allFail.size()).isEqualTo(0);
     }
 
-    @Test
-    void findAllFail2() {
-        UserChallenge userChallenge1 = UserChallenge.create(challenge, 1L);
-        userChallengeRepository.save(userChallenge1);
-        UserChallenge userChallenge2 = UserChallenge.create(challenge, 2L);
-        userChallengeRepository.save(userChallenge2);
-
-        List<PhotoCheck> photoChecks = userChallenge1.getPhotoChecks();
-        PhotoCheck photoCheck = PhotoCheck.builder().userChallenge(userChallenge1).build();
-        photoCheckRepository.save(photoCheck);
-        photoChecks.add(photoCheck);
-
-        List<UserChallenge> allFail = userChallengeRepository.findAllFail();
-
-        Assertions.assertThat(allFail.size()).isEqualTo(1);
-    }
 }

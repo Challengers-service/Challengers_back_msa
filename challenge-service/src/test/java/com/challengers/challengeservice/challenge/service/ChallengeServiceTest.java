@@ -7,6 +7,7 @@ import com.challengers.challengeservice.challenge.domain.CheckFrequencyType;
 import com.challengers.challengeservice.challenge.dto.ChallengeRequest;
 import com.challengers.challengeservice.challenge.dto.ChallengeUpdateRequest;
 import com.challengers.challengeservice.challenge.repository.ChallengeRepository;
+import com.challengers.challengeservice.challenge.repository.ChallengeSearchRepository;
 import com.challengers.challengeservice.common.AwsS3Uploader;
 import com.challengers.challengeservice.tag.domain.Tag;
 import com.challengers.challengeservice.tag.repository.TagRepository;
@@ -38,6 +39,7 @@ public class ChallengeServiceTest {
     @Mock UserChallengeRepository userChallengeRepository;
     @Mock AwsS3Uploader awsS3Uploader;
     @Mock CartRepository cartRepository;
+    @Mock ChallengeSearchRepository challengeSearchRepository;
 
     ChallengeService challengeService;
 
@@ -46,7 +48,7 @@ public class ChallengeServiceTest {
 
     @BeforeEach
     void setUp() {
-        challengeService = new ChallengeService(challengeRepository,tagRepository,userChallengeRepository,awsS3Uploader,cartRepository);
+        challengeService = new ChallengeService(challengeRepository,tagRepository,userChallengeRepository,awsS3Uploader,cartRepository,challengeSearchRepository);
 
         challengeRequest = ChallengeRequest.builder()
                 .name("미라클 모닝 - 아침 7시 기상")

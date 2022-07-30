@@ -49,6 +49,16 @@ spring:
             - AuthorizationHeaderFilter
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
 
+        - id: user-service #프로필 요청
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/api/user/global/**
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - AuthorizationHeaderAnonymousFilter
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
         - id: challenge-service # 비 로그인 사용자
           uri: lb://CHALLENGE-SERVICE
           predicates:
@@ -66,6 +76,24 @@ spring:
             - RemoveRequestHeader=Cookie
             - AuthorizationHeaderFilter
             - RewritePath=/challenge-service/(?<segment>.*), /$\{segment}
+
+        - id: review-service # 비 로그인 사용자
+          uri: lb://REVIEW-SERVICE
+          predicates:
+            - Path=/review-service/api/reviews/**
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/review-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderAnonymousFilter
+        - id: review-service # 로그인 사용자
+          uri: lb://REVIEW-SERVICE
+          predicates:
+            - Path=/review-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - AuthorizationHeaderFilter
+            - RewritePath=/review-service/(?<segment>.*), /$\{segment}
 
 token:
   accessTokenSecret: 04ca023b39512e46d0c2cf4b48d5aac61d34302994c87ed4eff225dcf3b0a218739f3897051a057f9b846a69ea2927a587044164b7bae5e1306219d50b588cb1

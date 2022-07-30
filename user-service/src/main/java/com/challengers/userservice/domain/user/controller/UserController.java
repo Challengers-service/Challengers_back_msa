@@ -1,5 +1,6 @@
 package com.challengers.userservice.domain.user.controller;
 
+import com.challengers.userservice.global.dto.UserInfoResponse;
 import com.challengers.userservice.domain.user.dto.UserMeResponse;
 import com.challengers.userservice.domain.user.dto.UserUpdateRequest;
 import com.challengers.userservice.domain.user.service.UserService;
@@ -28,5 +29,10 @@ public class UserController {
     public ResponseEntity<Void> updateUser(@Valid @RequestHeader(value="userId") String userId, @Valid @ModelAttribute UserUpdateRequest userUpdateRequest){
         userService.updateUser(Long.parseLong(userId), userUpdateRequest);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/global/{id}")
+    public ResponseEntity<UserInfoResponse> getUserInfo(@PathVariable String id) {
+        return ResponseEntity.ok(userService.getUserInfo(Long.parseLong(id)));
     }
 }

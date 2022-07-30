@@ -1,6 +1,7 @@
 package com.challengers.userservice.domain.user.service;
 
 import com.challengers.userservice.common.exception.UserException;
+import com.challengers.userservice.global.dto.UserInfoResponse;
 import com.challengers.userservice.domain.user.dto.UserMeResponse;
 import com.challengers.userservice.domain.user.dto.UserUpdateRequest;
 import com.challengers.userservice.domain.user.entity.User;
@@ -32,5 +33,12 @@ public class UserService {
         String changeBio = userUpdateRequest.getBio();
 
         user.update(changeName, changeBio, User.DEFAULT_IMAGE_URL);
+    }
+
+    @Transactional
+    public UserInfoResponse getUserInfo(Long userId){
+        return UserInfoResponse.of(userRepository
+                .findById(userId)
+                .orElseThrow(NoSuchElementException::new));
     }
 }

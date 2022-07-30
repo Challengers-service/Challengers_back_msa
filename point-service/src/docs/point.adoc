@@ -1,0 +1,51 @@
+= Point API
+point-api-docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+[[resources-point]]
+== Point
+
+[[resources-point-myPoint]]
+=== 내 포인트 조회하기
+
+operation::point/getMyPoint[snippets='http-request,request-headers,http-response,response-fields']
+
+[[resources-point-myPointHistory]]
+=== 내 포인트 내역 조회하기
+
+operation::point/getMyPointHistory[snippets='http-request,request-headers,http-response,response-fields']
+
+[[resources-point-p2p]]
+== p2p API
+
+사용자가 직접 호출하여 사용하는 API들이 아닌 마이크로 서비스간의 통신에 사용되는 API들 입니다.
+
+[[resources-point-createPointInfo]]
+=== 포인트 정보 생성
+
+사용자가 회원가입을 했을때 최초 1회만 호출되어서 포인트 정보를 생성합니다.
+
+operation::point/createPointInfo[snippets='http-request,request-headers,http-response']
+
+[[resources-point-removePointInfo]]
+=== 포인트 정보 삭제
+
+사용자가 회원 탈퇴를 했을때 호출되어 사용자의 모든 포인트 거래 내역들을 삭제합니다.
+
+operation::point/removePointInfo[snippets='http-request,request-headers,http-response']
+
+[[resources-point-updatePointInfo]]
+=== 포인트 업데이트
+
+나의 포인트를 업데이트 합니다.
+
+사용자가 출석했을때, 챌린지에 성공했을때, 챌린지를 개설하거나 참가했을때, 챌린지를 개설하고 취소했을때 호출됩니다.
+
+각각의 pointHistoryType은 ATTENDANCE, SUCCESS, DEPOSIT, CANCEL 입니다.
+
+operation::point/updateMyPoint[snippets='http-request,request-headers,request-fields,http-response']

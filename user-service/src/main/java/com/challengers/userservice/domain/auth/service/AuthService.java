@@ -10,6 +10,7 @@ import com.challengers.userservice.domain.auth.dto.AuthDto;
 import com.challengers.userservice.domain.auth.dto.LogInRequest;
 import com.challengers.userservice.domain.auth.dto.TokenDto;
 import com.challengers.userservice.domain.user.repository.UserRepository;
+import com.challengers.userservice.global.client.PointClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,13 +29,16 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
 
+    private final PointClient pointClient;
+
     @Transactional
     public ResponseEntity<String> signUp(@Valid @RequestBody AuthDto authDto) {
         if(userRepository.existsByEmail(authDto.getEmail())) {
             throw new BadRequestException("Email address already in use.");
         }
 
-        userRepository.save(User.builder()
+
+        User newUser = userRepository.save(User.builder()
                 .name(authDto.getName())
                 .email(authDto.getEmail())
                 .provider(AuthProvider.local)
@@ -43,6 +47,8 @@ public class AuthService {
                 .role(Role.USER)
                 .build()
         );
+
+        pointClient.createPointInfo(newUser.getId().toString());
 
         return new ResponseEntity<String>("회원 가입이 성공적으로 완료되었습니다!", HttpStatus.CREATED);
     }

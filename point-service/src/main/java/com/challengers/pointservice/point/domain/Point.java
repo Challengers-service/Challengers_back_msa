@@ -1,6 +1,7 @@
 package com.challengers.pointservice.point.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +20,13 @@ public class Point {
 
     private Long userId;
     private Long point;
+
+    @Builder
+    public Point(Long id, Long userId, Long point) {
+        this.id = id;
+        this.userId = userId;
+        this.point = point;
+    }
 
     private Point(Long userId, Long point) {
         this.userId = userId;

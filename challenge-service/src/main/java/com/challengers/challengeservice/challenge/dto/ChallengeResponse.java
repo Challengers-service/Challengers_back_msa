@@ -2,6 +2,7 @@ package com.challengers.challengeservice.challenge.dto;
 
 import com.challengers.challengeservice.challenge.domain.Challenge;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class ChallengeResponse {
     private Long challengeId;
     private String name;

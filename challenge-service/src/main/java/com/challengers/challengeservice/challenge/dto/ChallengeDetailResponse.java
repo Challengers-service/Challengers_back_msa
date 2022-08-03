@@ -3,16 +3,14 @@ package com.challengers.challengeservice.challenge.dto;
 import com.challengers.challengeservice.challenge.domain.Challenge;
 import com.challengers.challengeservice.challenge.domain.CheckFrequencyType;
 import com.challengers.challengeservice.tag.dto.TagResponse;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode
 public class ChallengeDetailResponse {
     private Long id;
 

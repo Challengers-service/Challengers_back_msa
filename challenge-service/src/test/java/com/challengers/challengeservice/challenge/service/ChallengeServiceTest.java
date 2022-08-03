@@ -3,9 +3,9 @@ package com.challengers.challengeservice.challenge.service;
 import com.challengers.challengeservice.cart.repository.CartRepository;
 import com.challengers.challengeservice.challenge.domain.Category;
 import com.challengers.challengeservice.challenge.domain.Challenge;
+import com.challengers.challengeservice.challenge.domain.ChallengeStatus;
 import com.challengers.challengeservice.challenge.domain.CheckFrequencyType;
-import com.challengers.challengeservice.challenge.dto.ChallengeRequest;
-import com.challengers.challengeservice.challenge.dto.ChallengeUpdateRequest;
+import com.challengers.challengeservice.challenge.dto.*;
 import com.challengers.challengeservice.challenge.repository.ChallengeRepository;
 import com.challengers.challengeservice.common.AwsS3Uploader;
 import com.challengers.challengeservice.tag.domain.Tag;
@@ -18,9 +18,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
@@ -76,9 +80,11 @@ public class ChallengeServiceTest {
                 .starRating(3.5f)
                 .depositPoint(1000)
                 .startDate(LocalDate.now())
-                .endDate(LocalDate.now())
+                .endDate(LocalDate.now().plusDays(7))
                 .introduction("매일 아침 7시에 일어나면 하루가 개운합니다.")
                 .userCountLimit(2000)
+                .status(ChallengeStatus.IN_PROGRESS)
+                .createdDate(LocalDateTime.now())
                 .build();
     }
 
@@ -168,6 +174,19 @@ public class ChallengeServiceTest {
     }
 
     @Test
+    @DisplayName("챌린지 상세 정보 조회")
+    void findChallenge() {
+        when(challengeRepository.findById(any())).thenReturn(Optional.of(challenge));
+        when(userChallengeRepository.findByChallengeIdAndStatus(any(),any())).thenReturn(new ArrayList<>());
+        when(cartRepository.findByChallengeIdAndUserId(any(),any())).thenReturn(Optional.empty());
+
+        ChallengeDetailResponse response = challengeService.findChallenge(1L, 1L);
+
+        assertThat(response).isEqualTo(ChallengeDetailResponse
+                .of(challenge, false,0L));
+    }
+
+    @Test
     @DisplayName("챌린지 참여 성공")
     void join() {
         when(challengeRepository.findById(any())).thenReturn(Optional.of(challenge));
@@ -198,5 +217,25 @@ public class ChallengeServiceTest {
                 .thenReturn(Optional.of(UserChallenge.create(challenge,challenge.getHostId())));
 
         assertThatThrownBy(()->challengeService.join(1L,1L)).isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    @DisplayName("챌린지 검색")
+    void search() {
+        PageImpl<Challenge> page = new PageImpl<>(Arrays.asList(challenge
+        ), PageRequest.of(0,6),2);
+
+        when(challengeRepository.search(any(),any())).thenReturn(page);
+        when(userChallengeRepository.findByChallengeId(any())).thenReturn(new ArrayList<>());
+        when(cartRepository.findByChallengeIdAndUserId(any(),any())).thenReturn(Optional.empty());
+
+        Page<ChallengeResponse> response = challengeService.search(
+                new ChallengeSearchCondition(null, null, null),
+                PageRequest.of(0, 6),
+                1L);
+
+        for (ChallengeResponse challengeResponse : response) {
+            assertThat(challengeResponse).isEqualTo(new ChallengeResponse(challenge,false,new ArrayList<>()));
+        }
     }
 }

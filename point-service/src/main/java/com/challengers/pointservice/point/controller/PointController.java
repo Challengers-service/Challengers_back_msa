@@ -4,6 +4,7 @@ package com.challengers.pointservice.point.controller;
 import com.challengers.pointservice.point.dto.PointHistoryResponse;
 import com.challengers.pointservice.point.dto.PointResponse;
 import com.challengers.pointservice.point.dto.PointUpdateRequest;
+import com.challengers.pointservice.point.global.dto.GiveRewardDto;
 import com.challengers.pointservice.point.service.PointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -47,6 +48,12 @@ public class PointController {
     @DeleteMapping
     public ResponseEntity<Void> removePointInfo(@RequestHeader(name = "userId") Long userId) {
         pointService.removePointInfo(userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/global/give_reward")
+    public ResponseEntity<Void> giveReward(@RequestBody GiveRewardDto giveRewardDto) {
+        pointService.giveReward(giveRewardDto);
         return ResponseEntity.ok().build();
     }
 }

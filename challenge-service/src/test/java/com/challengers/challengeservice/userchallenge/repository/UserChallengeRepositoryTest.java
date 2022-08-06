@@ -54,19 +54,4 @@ class UserChallengeRepositoryTest {
 
     }
 
-    @Test
-    void findAllFail() {
-        UserChallenge userChallenge = UserChallenge.create(challenge1, 1L);
-        userChallengeRepository.save(userChallenge);
-
-        List<PhotoCheck> photoChecks = userChallenge.getPhotoChecks();
-        PhotoCheck photoCheck = PhotoCheck.builder().userChallenge(userChallenge).build();
-        photoCheckRepository.save(photoCheck);
-        photoChecks.add(photoCheck);
-
-        List<UserChallenge> allFail = userChallengeRepository.findAllFail();
-
-        Assertions.assertThat(allFail.size()).isEqualTo(0);
-    }
-
 }

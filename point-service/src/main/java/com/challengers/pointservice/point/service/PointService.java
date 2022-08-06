@@ -6,6 +6,7 @@ import com.challengers.pointservice.point.domain.PointHistoryType;
 import com.challengers.pointservice.point.dto.PointHistoryResponse;
 import com.challengers.pointservice.point.dto.PointResponse;
 import com.challengers.pointservice.point.dto.PointUpdateRequest;
+import com.challengers.pointservice.point.global.dto.GiveRewardDto;
 import com.challengers.pointservice.point.repository.PointHistoryRepository;
 import com.challengers.pointservice.point.repository.PointRepository;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,18 @@ public class PointService {
                         PointHistoryType.of(request.getPointHistoryType())
                 ));
         point.updatePoint(request.getPointHistory());
+    }
+
+    @Transactional
+    public void giveReward(GiveRewardDto giveRewardDto) {
+        Point point = pointRepository.findByUserId(giveRewardDto.getUserId()).orElseThrow(NoSuchElementException::new);
+
+        pointHistoryRepository.save(
+                new PointHistory(point,
+                        giveRewardDto.getReward(),
+                        PointHistoryType.SUCCESS
+                ));
+        point.updatePoint(giveRewardDto.getReward());
     }
 
     @Transactional

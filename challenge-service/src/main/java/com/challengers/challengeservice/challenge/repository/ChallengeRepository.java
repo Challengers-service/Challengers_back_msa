@@ -15,7 +15,5 @@ import java.util.Collection;
 import java.util.List;
 
 public interface ChallengeRepository extends JpaRepository<Challenge,Long>, ChallengeRepositoryCustom {
-    List<Challenge> findAllByStartDate(LocalDate startDate);
     List<Challenge> findAllByEndDate(LocalDate EndDate);
-    List<Challenge> findAllByCheckFrequencyTypeInAndStatus(Collection<CheckFrequencyType> checkFrequencyType, ChallengeStatus status);
 }

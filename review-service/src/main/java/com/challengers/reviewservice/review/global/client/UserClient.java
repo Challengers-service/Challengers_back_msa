@@ -1,6 +1,6 @@
-package com.challengers.reviewservice.review.client;
+package com.challengers.reviewservice.review.global.client;
 
-import com.challengers.reviewservice.review.common.UserDto;
+import com.challengers.reviewservice.review.global.dto.UserDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

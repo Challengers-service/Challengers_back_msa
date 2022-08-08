@@ -1,17 +1,17 @@
 package com.challengers.reviewservice.review.service;
 
-import com.challengers.reviewservice.review.client.UserClient;
+import com.challengers.reviewservice.review.global.client.UserClient;
 import com.challengers.reviewservice.review.domain.Review;
 import com.challengers.reviewservice.review.dto.ReviewRequest;
 import com.challengers.reviewservice.review.dto.ReviewUpdateRequest;
 import com.challengers.reviewservice.review.repository.ReviewRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 
 import java.util.Optional;
 
@@ -25,13 +25,14 @@ import static org.mockito.Mockito.when;
 class ReviewServiceTest {
     @Mock ReviewRepository reviewRepository;
     @Mock UserClient userClient;
+    @Mock CircuitBreakerFactory circuitBreakerFactory;
     ReviewService reviewService;
 
     Review review;
 
     @BeforeEach
     void setUp() {
-        reviewService = new ReviewService(reviewRepository, userClient);
+        reviewService = new ReviewService(reviewRepository, userClient, circuitBreakerFactory);
 
         review = Review.builder()
                 .id(1L)

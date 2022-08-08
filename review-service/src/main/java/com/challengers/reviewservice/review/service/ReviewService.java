@@ -1,13 +1,16 @@
 package com.challengers.reviewservice.review.service;
 
 
-import com.challengers.reviewservice.review.client.UserClient;
+import com.challengers.reviewservice.review.global.client.UserClient;
+import com.challengers.reviewservice.review.global.dto.UserDto;
 import com.challengers.reviewservice.review.domain.Review;
 import com.challengers.reviewservice.review.dto.ReviewRequest;
 import com.challengers.reviewservice.review.dto.ReviewResponse;
 import com.challengers.reviewservice.review.dto.ReviewUpdateRequest;
 import com.challengers.reviewservice.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,8 @@ import java.util.NoSuchElementException;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserClient userClient;
+
+    private final CircuitBreakerFactory circuitBreakerFactory;
 
     @Transactional
     public void create(ReviewRequest reviewRequest, Long userId) {
@@ -55,8 +60,12 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public Page<ReviewResponse> findReviews(Pageable pageable, Long challengeId) {
         return reviewRepository.findAllByChallengeId(pageable, challengeId)
-                .map(review -> ReviewResponse.of(review,
-                        userClient.getUserInfo(String.valueOf(review.getUserId()))));
+                .map(review -> {
+                    CircuitBreaker circuitBreaker = circuitBreakerFactory.create("getUserInfo");
+                    return ReviewResponse.of(review,
+                            circuitBreaker.run(() -> userClient.getUserInfo(String.valueOf(review.getUserId())),
+                            throwable -> new UserDto(null, null, null)));
+                });
     }
 
     private void authorization(Long authorizationId, Long userId) {

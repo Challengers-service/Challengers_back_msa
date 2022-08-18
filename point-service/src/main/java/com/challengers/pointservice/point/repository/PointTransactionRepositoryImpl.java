@@ -27,9 +27,10 @@ public class PointTransactionRepositoryImpl extends Querydsl4RepositorySupport i
     public Page<PointTransactionResponse> getPointTransaction(Pageable pageable, Long pointId) {
         return applyPagination(pageable, contentQuery -> contentQuery
                         .select(new QPointTransactionResponse(
-                                pointTransaction.pointHistory,
+                                pointTransaction.amount,
                                 pointTransaction.createdAt,
-                                pointTransaction.type
+                                pointTransaction.type,
+                                pointTransaction.result
                         ))
                         .from(pointTransaction)
                         .where(pointTransaction.point.id.eq(pointId))

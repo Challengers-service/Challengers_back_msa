@@ -17,10 +17,12 @@ public class PointTransaction {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "point")
+    @JoinColumn(name = "point_id")
     private Point point;
 
-    private Long pointHistory;
+    private Long amount;
+
+    private Long result;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -28,9 +30,10 @@ public class PointTransaction {
     @Enumerated(EnumType.STRING)
     private PointTransactionType type;
 
-    public PointTransaction(Point point, Long pointHistory, PointTransactionType type) {
+    public PointTransaction(Point point, Long amount, PointTransactionType type) {
         this.point = point;
-        this.pointHistory = pointHistory;
+        this.amount = amount;
+        this.result = point.getPoint() + amount;
         this.type = type;
     }
 }

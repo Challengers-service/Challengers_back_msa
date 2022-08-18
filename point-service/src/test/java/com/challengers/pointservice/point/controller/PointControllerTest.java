@@ -54,18 +54,18 @@ public class PointControllerTest extends Documentation {
     void getMyPointHistory() throws Exception {
         PageImpl<PointTransactionResponse> page = new PageImpl<>(
                 Arrays.asList(
-                    new PointTransactionResponse(-1000L, LocalDateTime.now(), PointTransactionType.DEPOSIT),
-                    new PointTransactionResponse(100L, LocalDateTime.now(), PointTransactionType.ATTENDANCE)
+                    new PointTransactionResponse(-1000L, LocalDateTime.now(), PointTransactionType.DEPOSIT, 200L),
+                    new PointTransactionResponse(100L, LocalDateTime.now(), PointTransactionType.ATTENDANCE, 300L)
                 )
                 , PageRequest.of(0,6),2);
 
         when(pointService.getMyPointTransaction(any(),any())).thenReturn(page);
 
-        mockMvc.perform(get("/api/point/history")
+        mockMvc.perform(get("/api/point/transaction")
                     .header("Authorization", StringToken.getToken())
                     .header("userId",1L))
                 .andExpect(status().isOk())
-                .andDo(PointDocumentation.getMyPointHistory());
+                .andDo(PointDocumentation.getMyPointTransaction());
     }
 
     @Test

@@ -55,10 +55,10 @@ public class PointServiceTest {
     @DisplayName("나의 포인트 내역을 조회한다.")
     void getMyPointHistory() {
         PageImpl<PointTransactionResponse> page = new PageImpl<>(Arrays.asList(
-                new PointTransactionResponse(100L, LocalDateTime.now().minusHours(9L), PointTransactionType.ATTENDANCE),
-                new PointTransactionResponse(-500L, LocalDateTime.now().minusHours(6L), PointTransactionType.DEPOSIT),
-                new PointTransactionResponse(2000L, LocalDateTime.now().minusHours(3L), PointTransactionType.CANCEL),
-                new PointTransactionResponse(7430L,LocalDateTime.now(), PointTransactionType.SUCCESS)));
+                new PointTransactionResponse(100L, LocalDateTime.now().minusHours(9L), PointTransactionType.ATTENDANCE, 600L),
+                new PointTransactionResponse(-500L, LocalDateTime.now().minusHours(6L), PointTransactionType.DEPOSIT, 100L),
+                new PointTransactionResponse(2000L, LocalDateTime.now().minusHours(3L), PointTransactionType.CANCEL, 2100L),
+                new PointTransactionResponse(7430L,LocalDateTime.now(), PointTransactionType.SUCCESS, 9530L)));
         when(pointRepository.findByUserId(any())).thenReturn(Optional.of(Point.create(1L)));
         when(pointTransactionRepository.getPointTransaction(any(),any())).thenReturn(page);
 

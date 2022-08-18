@@ -8,14 +8,16 @@ import java.time.LocalDateTime;
 
 @Data
 public class PointTransactionResponse {
-    private Long pointHistory;
+    private Long amount;
     private String createdAt;
     private String type;
+    private Long result;
 
     @QueryProjection
-    public PointTransactionResponse(Long pointHistory, LocalDateTime createdAt, PointTransactionType type) {
-        this.pointHistory = pointHistory;
+    public PointTransactionResponse(Long amount, LocalDateTime createdAt, PointTransactionType type, Long result) {
+        this.amount = amount;
         this.createdAt = createdAt.toString();
         this.type = type.toString();
+        this.result = result;
     }
 }

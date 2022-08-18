@@ -24,7 +24,7 @@ public class PointController {
         return ResponseEntity.ok(pointService.getMyPoint(userId));
     }
 
-    @GetMapping("/history")
+    @GetMapping("/transaction")
     public ResponseEntity<Page<PointTransactionResponse>> getMyPointHistory(@PageableDefault(size = 6) Pageable pageable,
                                                                             @RequestHeader(name = "userId") Long userId) {
         return ResponseEntity.ok(pointService.getMyPointTransaction(pageable, userId));

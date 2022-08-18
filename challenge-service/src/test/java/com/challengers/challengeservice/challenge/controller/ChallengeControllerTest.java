@@ -1,5 +1,6 @@
 package com.challengers.challengeservice.challenge.controller;
 
+import com.challengers.challengeservice.challenge.dto.ChallengeResponse;
 import com.challengers.challengeservice.common.documentation.Documentation;
 import com.challengers.challengeservice.challenge.domain.ChallengeStatus;
 import com.challengers.challengeservice.challenge.domain.CheckFrequencyType;
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
@@ -25,6 +28,7 @@ import java.util.Arrays;
 import static com.challengers.challengeservice.testtool.UploadSupporter.uploadMockSupport;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -132,6 +136,111 @@ class ChallengeControllerTest extends Documentation {
                 .andDo(ChallengeDocumentation.updateChallenge());
 
         verify(challengeService).update(any(),any(),any());
+    }
+
+    @Test
+    @DisplayName("인기 챌린지 조회")
+    void search_hot() throws Exception{
+        PageImpl<ChallengeResponse> page = new PageImpl<>(Arrays.asList(new ChallengeResponse(1L, "매일 2시간 운동하기!", "LIFE",
+                        new ArrayList<>(Arrays.asList("건강", "운동")), "2022.07.02", 10, false,
+                        new ArrayList<>(Arrays.asList(1L, 2L, 3L))),
+                new ChallengeResponse(2L, "매일 2시간 뛰기!", "LIFE",
+                        new ArrayList<>(Arrays.asList("운동", "유산소")), "2022.07.03", 14, false,
+                        new ArrayList<>(Arrays.asList(1L, 2L)))), PageRequest.of(0,6),2);
+
+        when(challengeService.search(any(),any(),any())).thenReturn(page);
+        mockMvc.perform(get("/api/challenge?sort=userCount,desc")
+                        .header("Authorization", StringToken.getToken()))
+                .andExpect(status().isOk())
+                .andDo(ChallengeDocumentation.searchHot());
+    }
+
+    @Test
+    @DisplayName("신규 챌린지 조회")
+    void search_new() throws Exception{
+        PageImpl<ChallengeResponse> page = new PageImpl<>(Arrays.asList(new ChallengeResponse(2L, "매일 2시간 뛰기!", "LIFE",
+                        new ArrayList<>(Arrays.asList("운동", "유산소")), "2022.07.03", 14, false,
+                        new ArrayList<>(Arrays.asList(1L, 2L))),
+                new ChallengeResponse(1L, "매일 2시간 운동하기!", "LIFE",
+                        new ArrayList<>(Arrays.asList("건강", "운동")), "2022.07.02", 10, false,
+                        new ArrayList<>(Arrays.asList(1L, 2L, 3L)))
+        ),PageRequest.of(0,6),2);
+
+        when(challengeService.search(any(),any(),any())).thenReturn(page);
+        mockMvc.perform(get("/api/challenge?sort=id,desc")
+                        .header("Authorization", StringToken.getToken()))
+                .andExpect(status().isOk())
+                .andDo(ChallengeDocumentation.searchNew());
+    }
+
+    @Test
+    @DisplayName("카테고리별 챌린지 조회")
+    void search_category() throws Exception{
+        PageImpl<ChallengeResponse> page = new PageImpl<>(Arrays.asList(new ChallengeResponse(1L, "매일 2시간 운동하기!", "LIFE",
+                        new ArrayList<>(Arrays.asList("건강", "운동")), "2022.07.02", 10, false,
+                        new ArrayList<>(Arrays.asList(1L, 2L, 3L))),
+                new ChallengeResponse(2L, "매일 2시간 뛰기!", "LIFE",
+                        new ArrayList<>(Arrays.asList("운동", "유산소")), "2022.07.03", 14, false,
+                        new ArrayList<>(Arrays.asList(1L, 2L)))),PageRequest.of(0,6),2);
+
+        when(challengeService.search(any(),any(),any())).thenReturn(page);
+        mockMvc.perform(get("/api/challenge?category=LIFE")
+                        .header("Authorization", StringToken.getToken()))
+                .andExpect(status().isOk())
+                .andDo(ChallengeDocumentation.searchCategory());
+    }
+
+    @Test
+    @DisplayName("챌린지 이름으로 챌린지 검색")
+    void search_name() throws Exception{
+        PageImpl<ChallengeResponse> page = new PageImpl<>(Arrays.asList(new ChallengeResponse(1L, "매일 2시간 운동하기!", "LIFE",
+                        new ArrayList<>(Arrays.asList("건강", "운동")), "2022.07.02", 10, false,
+                        new ArrayList<>(Arrays.asList(1L, 2L, 3L))),
+                new ChallengeResponse(2L, "매일 2시간 뛰기!", "LIFE",
+                        new ArrayList<>(Arrays.asList("운동", "유산소")), "2022.07.03", 14, false,
+                        new ArrayList<>(Arrays.asList(1L, 2L)))),PageRequest.of(0,6),2);
+
+        when(challengeService.search(any(),any(),any())).thenReturn(page);
+
+        mockMvc.perform(get("/api/challenge?challengeName=매일")
+                        .header("Authorization", StringToken.getToken()))
+                .andExpect(status().isOk())
+                .andDo(ChallengeDocumentation.searchName());
+    }
+
+    @Test
+    @DisplayName("태그로 챌린지 검색")
+    void search_tag() throws Exception{
+        PageImpl<ChallengeResponse> page = new PageImpl<>(Arrays.asList(new ChallengeResponse(1L, "매일 2시간 운동하기!", "LIFE",
+                        new ArrayList<>(Arrays.asList("건강", "운동")), "2022.07.02", 10, false,
+                        new ArrayList<>(Arrays.asList(1L, 2L, 3L))),
+                new ChallengeResponse(2L, "매일 2시간 뛰기!", "LIFE",
+                        new ArrayList<>(Arrays.asList("운동", "유산소")), "2022.07.03", 14, false,
+                        new ArrayList<>(Arrays.asList(1L, 2L)))),PageRequest.of(0,6),2);
+
+        when(challengeService.search(any(),any(),any())).thenReturn(page);
+
+        mockMvc.perform(get("/api/challenge?tagName=운동")
+                        .header("Authorization", StringToken.getToken()))
+                .andExpect(status().isOk())
+                .andDo(ChallengeDocumentation.searchTag());
+    }
+
+    @Test
+    @DisplayName("챌린지 검색 결과에 필터 적용")
+    void search_filter() throws Exception{
+        PageImpl<ChallengeResponse> page = new PageImpl<>(Arrays.asList(new ChallengeResponse(1L, "매일 2시간 운동하기!", "LIFE",
+                        new ArrayList<>(Arrays.asList("건강", "운동")), "2022.07.02", 10, false,
+                        new ArrayList<>(Arrays.asList(1L, 2L, 3L))),
+                new ChallengeResponse(2L, "매일 2시간 뛰기!", "LIFE",
+                        new ArrayList<>(Arrays.asList("운동", "유산소")), "2022.07.03", 14, false,
+                        new ArrayList<>(Arrays.asList(1L, 2L)))),PageRequest.of(0,6),2);
+
+        when(challengeService.search(any(),any(),any())).thenReturn(page);
+        mockMvc.perform(get("/api/challenge?challengeName=매일 2시간&sort=userCount,desc")
+                        .header("Authorization", StringToken.getToken()))
+                .andExpect(status().isOk())
+                .andDo(ChallengeDocumentation.searchFilter());
     }
 
 }

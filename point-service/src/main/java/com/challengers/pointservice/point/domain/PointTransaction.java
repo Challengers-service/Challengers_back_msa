@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PointHistory {
+public class PointTransaction {
     @Id @GeneratedValue
     @Column(name = "point_history_id")
     private Long id;
@@ -27,9 +26,9 @@ public class PointHistory {
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
-    private PointHistoryType type;
+    private PointTransactionType type;
 
-    public PointHistory(Point point, Long pointHistory, PointHistoryType type) {
+    public PointTransaction(Point point, Long pointHistory, PointTransactionType type) {
         this.point = point;
         this.pointHistory = pointHistory;
         this.type = type;

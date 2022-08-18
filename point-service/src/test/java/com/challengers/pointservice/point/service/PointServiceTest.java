@@ -1,11 +1,11 @@
 package com.challengers.pointservice.point.service;
 
 import com.challengers.pointservice.point.domain.Point;
-import com.challengers.pointservice.point.domain.PointHistoryType;
-import com.challengers.pointservice.point.dto.PointHistoryResponse;
+import com.challengers.pointservice.point.domain.PointTransactionType;
+import com.challengers.pointservice.point.dto.PointTransactionResponse;
 import com.challengers.pointservice.point.dto.PointResponse;
 import com.challengers.pointservice.point.dto.PointUpdateRequest;
-import com.challengers.pointservice.point.repository.PointHistoryRepository;
+import com.challengers.pointservice.point.repository.PointTransactionRepository;
 import com.challengers.pointservice.point.repository.PointRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,13 +32,13 @@ public class PointServiceTest {
     PointRepository pointRepository;
 
     @Mock
-    PointHistoryRepository pointHistoryRepository;
+    PointTransactionRepository pointTransactionRepository;
 
     PointService pointService;
 
     @BeforeEach
     void setUp() {
-        pointService = new PointService(pointRepository, pointHistoryRepository);
+        pointService = new PointService(pointRepository, pointTransactionRepository);
     }
 
     @Test
@@ -54,15 +54,15 @@ public class PointServiceTest {
     @Test
     @DisplayName("나의 포인트 내역을 조회한다.")
     void getMyPointHistory() {
-        PageImpl<PointHistoryResponse> page = new PageImpl<>(Arrays.asList(
-                new PointHistoryResponse(100L, LocalDateTime.now().minusHours(9L), PointHistoryType.ATTENDANCE),
-                new PointHistoryResponse(-500L, LocalDateTime.now().minusHours(6L), PointHistoryType.DEPOSIT),
-                new PointHistoryResponse(2000L, LocalDateTime.now().minusHours(3L),PointHistoryType.CANCEL),
-                new PointHistoryResponse(7430L,LocalDateTime.now(),PointHistoryType.SUCCESS)));
+        PageImpl<PointTransactionResponse> page = new PageImpl<>(Arrays.asList(
+                new PointTransactionResponse(100L, LocalDateTime.now().minusHours(9L), PointTransactionType.ATTENDANCE),
+                new PointTransactionResponse(-500L, LocalDateTime.now().minusHours(6L), PointTransactionType.DEPOSIT),
+                new PointTransactionResponse(2000L, LocalDateTime.now().minusHours(3L), PointTransactionType.CANCEL),
+                new PointTransactionResponse(7430L,LocalDateTime.now(), PointTransactionType.SUCCESS)));
         when(pointRepository.findByUserId(any())).thenReturn(Optional.of(Point.create(1L)));
-        when(pointHistoryRepository.getPointHistory(any(),any())).thenReturn(page);
+        when(pointTransactionRepository.getPointTransaction(any(),any())).thenReturn(page);
 
-        Page<PointHistoryResponse> response = pointService.getMyPointHistory(PageRequest.of(0, 6), 1L);
+        Page<PointTransactionResponse> response = pointService.getMyPointTransaction(PageRequest.of(0, 6), 1L);
 
         assertThat(response).isEqualTo(page);
     }
@@ -76,7 +76,7 @@ public class PointServiceTest {
 
         pointService.updatePoint(1L, request);
 
-        verify(pointHistoryRepository).save(any());
+        verify(pointTransactionRepository).save(any());
         assertThat(point.getPoint()).isEqualTo(100L+request.getPointHistory());
     }
 
@@ -89,7 +89,7 @@ public class PointServiceTest {
 
         pointService.updatePoint(1L, request);
 
-        verify(pointHistoryRepository).save(any());
+        verify(pointTransactionRepository).save(any());
         assertThat(point.getPoint()).isEqualTo(100L+request.getPointHistory());
     }
 
@@ -130,7 +130,7 @@ public class PointServiceTest {
 
         pointService.removePointInfo(1L);
 
-        verify(pointHistoryRepository).deleteByPointId(any());
+        verify(pointTransactionRepository).deleteByPointId(any());
         verify(pointRepository).delete(any());
     }
 

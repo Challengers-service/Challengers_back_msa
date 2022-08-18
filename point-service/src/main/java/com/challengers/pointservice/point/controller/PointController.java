@@ -1,7 +1,7 @@
 package com.challengers.pointservice.point.controller;
 
 
-import com.challengers.pointservice.point.dto.PointHistoryResponse;
+import com.challengers.pointservice.point.dto.PointTransactionResponse;
 import com.challengers.pointservice.point.dto.PointResponse;
 import com.challengers.pointservice.point.dto.PointUpdateRequest;
 import com.challengers.pointservice.point.global.dto.GiveRewardDto;
@@ -25,9 +25,9 @@ public class PointController {
     }
 
     @GetMapping("/history")
-    public ResponseEntity<Page<PointHistoryResponse>> getMyPointHistory(@PageableDefault(size = 6) Pageable pageable,
-                                                                        @RequestHeader(name = "userId") Long userId) {
-        return ResponseEntity.ok(pointService.getMyPointHistory(pageable, userId));
+    public ResponseEntity<Page<PointTransactionResponse>> getMyPointHistory(@PageableDefault(size = 6) Pageable pageable,
+                                                                            @RequestHeader(name = "userId") Long userId) {
+        return ResponseEntity.ok(pointService.getMyPointTransaction(pageable, userId));
     }
 
     // p2p api [request only other microservices]

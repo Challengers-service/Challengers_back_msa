@@ -1,8 +1,8 @@
 package com.challengers.pointservice.point.controller;
 
 import com.challengers.pointservice.common.documentation.Documentation;
-import com.challengers.pointservice.point.domain.PointHistoryType;
-import com.challengers.pointservice.point.dto.PointHistoryResponse;
+import com.challengers.pointservice.point.domain.PointTransactionType;
+import com.challengers.pointservice.point.dto.PointTransactionResponse;
 import com.challengers.pointservice.point.dto.PointResponse;
 import com.challengers.pointservice.point.dto.PointUpdateRequest;
 import com.challengers.pointservice.point.service.PointService;
@@ -52,14 +52,14 @@ public class PointControllerTest extends Documentation {
     @Test
     @DisplayName("나의 포인트 내역을 조회한다.")
     void getMyPointHistory() throws Exception {
-        PageImpl<PointHistoryResponse> page = new PageImpl<>(
+        PageImpl<PointTransactionResponse> page = new PageImpl<>(
                 Arrays.asList(
-                    new PointHistoryResponse(-1000L, LocalDateTime.now(), PointHistoryType.DEPOSIT),
-                    new PointHistoryResponse(100L, LocalDateTime.now(), PointHistoryType.ATTENDANCE)
+                    new PointTransactionResponse(-1000L, LocalDateTime.now(), PointTransactionType.DEPOSIT),
+                    new PointTransactionResponse(100L, LocalDateTime.now(), PointTransactionType.ATTENDANCE)
                 )
                 , PageRequest.of(0,6),2);
 
-        when(pointService.getMyPointHistory(any(),any())).thenReturn(page);
+        when(pointService.getMyPointTransaction(any(),any())).thenReturn(page);
 
         mockMvc.perform(get("/api/point/history")
                     .header("Authorization", StringToken.getToken())

@@ -1,13 +1,13 @@
 package com.challengers.pointservice.point.service;
 
 import com.challengers.pointservice.point.domain.Point;
-import com.challengers.pointservice.point.domain.PointHistory;
-import com.challengers.pointservice.point.domain.PointHistoryType;
-import com.challengers.pointservice.point.dto.PointHistoryResponse;
+import com.challengers.pointservice.point.domain.PointTransaction;
+import com.challengers.pointservice.point.domain.PointTransactionType;
+import com.challengers.pointservice.point.dto.PointTransactionResponse;
 import com.challengers.pointservice.point.dto.PointResponse;
 import com.challengers.pointservice.point.dto.PointUpdateRequest;
 import com.challengers.pointservice.point.global.dto.GiveRewardDto;
-import com.challengers.pointservice.point.repository.PointHistoryRepository;
+import com.challengers.pointservice.point.repository.PointTransactionRepository;
 import com.challengers.pointservice.point.repository.PointRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class PointService {
     private final PointRepository pointRepository;
-    private final PointHistoryRepository pointHistoryRepository;
+    private final PointTransactionRepository pointTransactionRepository;
 
     @Transactional(readOnly = true)
     public PointResponse getMyPoint(Long userId) {
@@ -33,10 +33,10 @@ public class PointService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PointHistoryResponse> getMyPointHistory(Pageable pageable, Long userId) {
+    public Page<PointTransactionResponse> getMyPointTransaction(Pageable pageable, Long userId) {
         Point point = pointRepository.findByUserId(userId).orElseThrow(NoSuchElementException::new);
 
-        return pointHistoryRepository.getPointHistory(pageable, point.getId());
+        return pointTransactionRepository.getPointTransaction(pageable, point.getId());
     }
 
     @Transactional
@@ -44,10 +44,10 @@ public class PointService {
         Point point = pointRepository.findByUserId(userId).orElseThrow(NoSuchElementException::new);
         if (request.getPointHistory() < 0L && point.getPoint() < request.getPointHistory()*-1)
             throw new RuntimeException("포인트가 부족합니다.");
-        pointHistoryRepository.save(
-                new PointHistory(point,
+        pointTransactionRepository.save(
+                new PointTransaction(point,
                         request.getPointHistory(),
-                        PointHistoryType.of(request.getPointHistoryType())
+                        PointTransactionType.of(request.getPointHistoryType())
                 ));
         point.updatePoint(request.getPointHistory());
     }
@@ -56,10 +56,10 @@ public class PointService {
     public void giveReward(GiveRewardDto giveRewardDto) {
         Point point = pointRepository.findByUserId(giveRewardDto.getUserId()).orElseThrow(NoSuchElementException::new);
 
-        pointHistoryRepository.save(
-                new PointHistory(point,
+        pointTransactionRepository.save(
+                new PointTransaction(point,
                         giveRewardDto.getReward(),
-                        PointHistoryType.SUCCESS
+                        PointTransactionType.SUCCESS
                 ));
         point.updatePoint(giveRewardDto.getReward());
     }
@@ -76,7 +76,7 @@ public class PointService {
     public void removePointInfo(Long userId) {
         Point point = pointRepository.findByUserId(userId).orElseThrow();
 
-        pointHistoryRepository.deleteByPointId(point.getId());
+        pointTransactionRepository.deleteByPointId(point.getId());
         pointRepository.delete(point);
     }
 }

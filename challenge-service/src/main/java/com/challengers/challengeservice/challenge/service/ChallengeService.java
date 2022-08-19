@@ -5,8 +5,10 @@ import com.challengers.challengeservice.cart.repository.CartRepository;
 import com.challengers.challengeservice.challenge.domain.Challenge;
 import com.challengers.challengeservice.challenge.dto.*;
 import com.challengers.challengeservice.challenge.repository.ChallengeRepository;
+import com.challengers.challengeservice.challengephoto.repository.ChallengePhotoRepository;
 import com.challengers.challengeservice.challengetag.domain.ChallengeTag;
 import com.challengers.challengeservice.common.AwsS3Uploader;
+import com.challengers.challengeservice.photocheck.repository.PhotoCheckRepository;
 import com.challengers.challengeservice.tag.domain.Tag;
 import com.challengers.challengeservice.tag.repository.TagRepository;
 import com.challengers.challengeservice.userchallenge.ChallengeJoinManager;
@@ -31,6 +33,8 @@ public class ChallengeService {
     private final UserChallengeRepository userChallengeRepository;
     private final AwsS3Uploader awsS3Uploader;
     private final CartRepository cartRepository;
+    private final PhotoCheckRepository photoCheckRepository;
+    private final ChallengePhotoRepository challengePhotoRepository;
 
 
     @Transactional
@@ -84,10 +88,14 @@ public class ChallengeService {
         awsS3Uploader.deleteImage(challenge.getImageUrl());
         awsS3Uploader.deleteImages(challenge.getExamplePhotoUrls());
         UserChallenge userChallenge = userChallengeRepository.findByUserIdAndChallengeId(challenge.getHostId(), challengeId).orElseThrow(NoSuchElementException::new);
+        photoCheckRepository.findByUserChallengeId(userChallenge.getId()).forEach(photoCheck -> {
+            photoCheckRepository.delete(photoCheck);
+            challengePhotoRepository.delete(photoCheck.getChallengePhoto());
+        });
 
         userChallengeRepository.delete(userChallenge);
 
-        //찜한 사람이 있는 경우 찜목록에서 삭제시키고 알림 보내야함
+        cartRepository.findByChallengeId(challengeId).forEach(cartRepository::delete);
 
         challengeRepository.delete(challenge);
     }

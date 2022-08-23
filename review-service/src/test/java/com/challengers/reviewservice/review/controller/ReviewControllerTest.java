@@ -20,9 +20,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import java.util.Arrays;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -131,6 +129,17 @@ class ReviewControllerTest extends Documentation {
                 .andDo(ReviewDocumentation.getStarRatingAvg());
 
         verify(reviewRepository).getStarRatingAvgByChallengeId(any());
+    }
+
+    @Test
+    @DisplayName("챌린지에 작성된 모든 리뷰를 삭제한다.")
+    void deleteReviewsByChallengeId() throws Exception{
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/reviews")
+                        .param("challengeId","1"))
+                .andExpect(status().isOk())
+                .andDo(ReviewDocumentation.deleteReviewsByChallengeId());
+
+        verify(reviewService).delete(any());
     }
 
 }

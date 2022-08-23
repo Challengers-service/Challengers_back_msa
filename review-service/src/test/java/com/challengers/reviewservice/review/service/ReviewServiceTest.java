@@ -79,6 +79,14 @@ class ReviewServiceTest {
     }
 
     @Test
+    @DisplayName("챌린지에 작성된 모든 리뷰 삭제 성공")
+    void deleteReviewsByChallengeId() {
+        reviewService.delete(1L);
+
+        verify(reviewRepository).deleteByChallengeId(any());
+    }
+
+    @Test
     @DisplayName("리뷰 수정 성공")
     void update() {
         ReviewUpdateRequest reviewUpdateRequest = new ReviewUpdateRequest("수정할 리뷰 제목입니다.",

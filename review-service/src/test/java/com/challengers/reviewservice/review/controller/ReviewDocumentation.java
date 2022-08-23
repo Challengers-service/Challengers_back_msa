@@ -139,4 +139,13 @@ public class ReviewDocumentation {
                 pathParameters(parameterWithName("challengeId").description("조회할 챌린지 ID"))
         );
     }
+
+    public static RestDocumentationResultHandler deleteReviewsByChallengeId() {
+
+        return document("reviews/deleteReviewsByChallengeId",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                requestParameters(parameterWithName("challengeId").description("삭제할 리뷰들의 챌린지 ID"))
+        );
+    }
 }

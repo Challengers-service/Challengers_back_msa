@@ -51,6 +51,11 @@ public class ReviewService {
     }
 
     @Transactional
+    public void delete(Long challengeId) {
+        reviewRepository.deleteByChallengeId(challengeId);
+    }
+
+    @Transactional
     public void update(Long reviewId, ReviewUpdateRequest reviewUpdateRequest, Long userId) {
         Review review = reviewRepository.findById(reviewId).orElseThrow(NoSuchElementException::new);
         authorization(review.getUserId(), userId);

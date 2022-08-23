@@ -36,10 +36,6 @@ public class Challenge extends BaseTimeEntity {
     private LocalDate endDate;
     private int depositPoint;
     private String introduction;
-    private Float totalStarRating;
-    private Float starRating;
-    private int reviewCount;
-    private int userCount;
     private int userCountLimit;
     private int failedPoint;
     private int round;
@@ -71,7 +67,6 @@ public class Challenge extends BaseTimeEntity {
     public Challenge(Long id, Long hostId, String name, String imageUrl, String photoDescription,
                      String challengeRule, CheckFrequencyType checkFrequencyType, int checkTimesPerRound, Category category,
                      LocalDate startDate, LocalDate endDate, int depositPoint, String introduction,
-                     Float totalStarRating, Float starRating, int reviewCount, int userCount,
                      int userCountLimit, int failedPoint, int round, ChallengeStatus status,
                      LocalDateTime createdDate, LocalDateTime updatedDate) {
         this.id = id;
@@ -87,10 +82,6 @@ public class Challenge extends BaseTimeEntity {
         this.endDate = endDate;
         this.depositPoint = depositPoint;
         this.introduction = introduction;
-        this.totalStarRating = totalStarRating;
-        this.starRating = starRating;
-        this.reviewCount = reviewCount;
-        this.userCount = userCount;
         this.userCountLimit = userCountLimit;
         this.failedPoint = failedPoint;
         this.round = round;
@@ -129,27 +120,6 @@ public class Challenge extends BaseTimeEntity {
         this.imageUrl = imageUrl;
     }
 
-    public void joinUser() {
-        this.userCount++;
-    }
-
-    public void addReviewRelation(Float starRating) {
-        reviewCount++;
-        totalStarRating += starRating;
-        updateStarRating();
-    }
-
-    public void deleteReviewRelation(Float starRating) {
-        reviewCount--;
-        totalStarRating -= starRating;
-        updateStarRating();
-    }
-
-    public void updateReviewRelation(Float starRating, Float newStarRating) {
-        totalStarRating = totalStarRating - starRating + newStarRating;
-        updateStarRating();
-    }
-
     public void toInProgress() {
         status = ChallengeStatus.IN_PROGRESS;
     }
@@ -160,10 +130,6 @@ public class Challenge extends BaseTimeEntity {
 
     public void toFinish() {
         this.status = ChallengeStatus.FINISH;
-    }
-
-    private void updateStarRating() {
-        starRating = reviewCount == 0 ? 0.0f : Math.round(totalStarRating/reviewCount*10)/10.0f;
     }
 
     public void initStatus() {

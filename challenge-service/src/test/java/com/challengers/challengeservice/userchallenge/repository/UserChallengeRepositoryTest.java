@@ -38,7 +38,6 @@ class UserChallengeRepositoryTest {
                 .startDate(LocalDate.now().plusDays(1))
                 .endDate(LocalDate.now().plusDays(10))
                 .checkTimesPerRound(1)
-                .userCount(1)
                 .build();
         challengeRepository.save(challenge1);
 
@@ -48,7 +47,6 @@ class UserChallengeRepositoryTest {
                 .startDate(LocalDate.now().plusDays(1))
                 .endDate(LocalDate.now().plusDays(10))
                 .checkTimesPerRound(1)
-                .userCount(2)
                 .build();
         challengeRepository.save(challenge2);
 

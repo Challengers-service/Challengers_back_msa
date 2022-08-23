@@ -77,7 +77,7 @@ public class ChallengeDocumentation {
                 fieldWithPath("endDate").type(JsonFieldType.STRING).description("챌린지 종료일 [yyyy-MM-dd]"),
                 fieldWithPath("depositPoint").type(JsonFieldType.NUMBER).description("예치 포인트"),
                 fieldWithPath("introduction").type(JsonFieldType.STRING).description("챌린지 소개글"),
-                fieldWithPath("starRating").type(JsonFieldType.NUMBER).description("챌린지 평균 별점 [0.0~5.0]"),
+                fieldWithPath("starRatingAvg").type(JsonFieldType.NUMBER).description("챌린지 평균 별점 [0.0~5.0]"),
                 fieldWithPath("reviewCount").type(JsonFieldType.NUMBER).description("챌린지에 달린 리뷰 갯수"),
                 fieldWithPath("userCount").type(JsonFieldType.NUMBER).description("챌린지에 참여하고 있는 인원수"),
                 fieldWithPath("userCountLimit").type(JsonFieldType.NUMBER).description("참가 가능한 최대 인원수"),

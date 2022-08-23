@@ -3,6 +3,7 @@ package com.challengers.reviewservice.review.controller;
 import com.challengers.reviewservice.review.dto.ReviewRequest;
 import com.challengers.reviewservice.review.dto.ReviewResponse;
 import com.challengers.reviewservice.review.dto.ReviewUpdateRequest;
+import com.challengers.reviewservice.review.repository.ReviewRepository;
 import com.challengers.reviewservice.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,8 @@ import javax.validation.Valid;
 @RequestMapping("/api/reviews")
 public class ReviewController {
     private final ReviewService reviewService;
+
+    private final ReviewRepository reviewRepository;
 
     @GetMapping("/{challengeId}")
     public ResponseEntity<Page<ReviewResponse>> showReviews(@PageableDefault(size = 6) Pageable pageable,
@@ -49,5 +52,15 @@ public class ReviewController {
         reviewService.update(reviewId, reviewUpdateRequest, userId);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/count/{challengeId}")
+    public ResponseEntity<Integer> getReviewCount(@PathVariable(name = "challengeId") Long challengeId) {
+        return ResponseEntity.ok(reviewRepository.countByChallengeId(challengeId));
+    }
+
+    @GetMapping("/star_rating/{challengeId}")
+    public ResponseEntity<Float> getStarRatingAvg(@PathVariable(name = "challengeId") Long challengeId) {
+        return ResponseEntity.ok(reviewRepository.getStarRatingAvgByChallengeId(challengeId));
     }
 }

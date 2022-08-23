@@ -9,6 +9,7 @@ import com.challengers.challengeservice.challengephoto.repository.ChallengePhoto
 import com.challengers.challengeservice.challengetag.domain.ChallengeTag;
 import com.challengers.challengeservice.common.AwsS3Uploader;
 import com.challengers.challengeservice.global.client.PointClient;
+import com.challengers.challengeservice.global.client.ReviewClient;
 import com.challengers.challengeservice.global.dto.PointUpdateRequest;
 import com.challengers.challengeservice.photocheck.repository.PhotoCheckRepository;
 import com.challengers.challengeservice.tag.domain.Tag;
@@ -38,7 +39,7 @@ public class ChallengeService {
     private final PhotoCheckRepository photoCheckRepository;
     private final ChallengePhotoRepository challengePhotoRepository;
     private final PointClient pointClient;
-
+    private final ReviewClient reviewClient;
 
     @Transactional
     public Long create(ChallengeRequest challengeRequest, Long userId) {
@@ -87,7 +88,7 @@ public class ChallengeService {
     public void delete(Long challengeId, Long userId) {
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(NoSuchElementException::new);
         if (!challenge.getHostId().equals(userId)) throw new RuntimeException("권한이 없는 요청");
-        if (!userChallengeRepository.countByChallengeId(challengeId).equals(1L)) throw new RuntimeException("삭제 조건에 부합하지 않음 - 챌린지 참여자가 2명 이상 있음");
+        if (userChallengeRepository.countByChallengeId(challengeId) != 1) throw new RuntimeException("삭제 조건에 부합하지 않음 - 챌린지 참여자가 2명 이상 있음");
 
         awsS3Uploader.deleteImage(challenge.getImageUrl());
         awsS3Uploader.deleteImages(challenge.getExamplePhotoUrls());
@@ -119,7 +120,11 @@ public class ChallengeService {
         }
         int maxProgress = ChallengeJoinManager.getMaxProgress(challenge);
 
+
         return ChallengeDetailResponse.of(challenge,
+                userChallengeRepository.countByChallengeId(challengeId),
+                reviewClient.getStarRatingAvg(challengeId),
+                reviewClient.getReviewCount(challengeId),
                 cartRepository.findByChallengeIdAndUserId(challengeId, userId).isPresent(),
                 challenge.getFailedPoint()/(progress+maxProgress)*maxProgress);
     }
@@ -127,7 +132,7 @@ public class ChallengeService {
     @Transactional
     public void join(Long challengeId, Long userId) {
         Challenge challenge = challengeRepository.findById(challengeId).orElseThrow(NoSuchElementException::new);
-        if (challenge.getUserCount() == challenge.getUserCountLimit())
+        if (userChallengeRepository.countByChallengeId(challengeId) == challenge.getUserCountLimit())
             throw new RuntimeException("참여 인원이 가득 찼습니다.");
 
         if (userChallengeRepository.findByUserIdAndChallengeId(userId,challengeId).isPresent())
@@ -136,9 +141,6 @@ public class ChallengeService {
         if (!ChallengeJoinManager.canJoin(challenge))
             throw new RuntimeException(
                     "다음주 월요일까지 남은 일 수 보다 일주일에 인증해야 하는 횟수가 많기때문에 다음 주에 참여해야 합니다.");
-
-        challenge.joinUser();
-
         /*
         updateChallengeAchievement(user);
 

@@ -121,4 +121,22 @@ public class ReviewDocumentation {
                 requestHeaders(requestHeaders)
         );
     }
+
+    public static RestDocumentationResultHandler getReviewCount() {
+
+        return document("reviews/getReviewCount",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(parameterWithName("challengeId").description("조회할 챌린지 ID"))
+        );
+    }
+
+    public static RestDocumentationResultHandler getStarRatingAvg() {
+
+        return document("reviews/getStarRatingAvg",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                pathParameters(parameterWithName("challengeId").description("조회할 챌린지 ID"))
+        );
+    }
 }

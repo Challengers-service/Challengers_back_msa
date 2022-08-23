@@ -10,6 +10,7 @@ import com.challengers.challengeservice.challenge.repository.ChallengeRepository
 import com.challengers.challengeservice.challengephoto.repository.ChallengePhotoRepository;
 import com.challengers.challengeservice.common.AwsS3Uploader;
 import com.challengers.challengeservice.global.client.PointClient;
+import com.challengers.challengeservice.global.client.ReviewClient;
 import com.challengers.challengeservice.photocheck.repository.PhotoCheckRepository;
 import com.challengers.challengeservice.tag.domain.Tag;
 import com.challengers.challengeservice.tag.repository.TagRepository;
@@ -21,6 +22,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -48,6 +51,7 @@ public class ChallengeServiceTest {
     @Mock PhotoCheckRepository photoCheckRepository;
     @Mock ChallengePhotoRepository challengePhotoRepository;
     @Mock PointClient pointClient;
+    @Mock ReviewClient reviewClient;
 
     ChallengeService challengeService;
 
@@ -57,7 +61,7 @@ public class ChallengeServiceTest {
     @BeforeEach
     void setUp() {
         challengeService = new ChallengeService(challengeRepository,tagRepository,userChallengeRepository,
-                awsS3Uploader,cartRepository,photoCheckRepository,challengePhotoRepository, pointClient);
+                awsS3Uploader,cartRepository,photoCheckRepository,challengePhotoRepository, pointClient, reviewClient);
 
         challengeRequest = ChallengeRequest.builder()
                 .name("미라클 모닝 - 아침 7시 기상")
@@ -84,7 +88,6 @@ public class ChallengeServiceTest {
                 .challengeRule("7시를 가르키는 시계와 본인이 같이 나오게 사진을 찍으시면 됩니다.")
                 .checkFrequencyType(CheckFrequencyType.EVERY_DAY)
                 .category(Category.LIFE)
-                .starRating(3.5f)
                 .depositPoint(1000)
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(7))
@@ -160,7 +163,7 @@ public class ChallengeServiceTest {
     @DisplayName("챌린지 삭제 성공")
     void delete() {
         when(challengeRepository.findById(any())).thenReturn(Optional.of(challenge));
-        when(userChallengeRepository.countByChallengeId(any())).thenReturn(1L);
+        when(userChallengeRepository.countByChallengeId(any())).thenReturn(1);
         when(userChallengeRepository.findByUserIdAndChallengeId(any(),any()))
                 .thenReturn(Optional.of(UserChallenge.create(challenge,challenge.getHostId())));
 
@@ -174,7 +177,7 @@ public class ChallengeServiceTest {
     @DisplayName("챌린지 삭제 실패 - 참가자가 2명 이상일 경우")
     void delete_fail_proceeding() {
         when(challengeRepository.findById(any())).thenReturn(Optional.of(challenge));
-        when(userChallengeRepository.countByChallengeId(any())).thenReturn(2L);
+        when(userChallengeRepository.countByChallengeId(any())).thenReturn(2);
 
         assertThatThrownBy(() -> challengeService.delete(challenge.getId(),challenge.getHostId()))
                 .isInstanceOf(RuntimeException.class);
@@ -186,11 +189,14 @@ public class ChallengeServiceTest {
         when(challengeRepository.findById(any())).thenReturn(Optional.of(challenge));
         when(userChallengeRepository.findByChallengeIdAndStatus(any(),any())).thenReturn(new ArrayList<>());
         when(cartRepository.findByChallengeIdAndUserId(any(),any())).thenReturn(Optional.empty());
+        when(userChallengeRepository.countByChallengeId(any())).thenReturn(5);
+        when(reviewClient.getReviewCount(any())).thenReturn(3);
+        when(reviewClient.getStarRatingAvg(any())).thenReturn(3.5f);
 
         ChallengeDetailResponse response = challengeService.findChallenge(1L, 1L);
 
         assertThat(response).isEqualTo(ChallengeDetailResponse
-                .of(challenge, false,0L));
+                .of(challenge, 5,3.5f,3,false,0L));
     }
 
     @Test
@@ -208,11 +214,10 @@ public class ChallengeServiceTest {
     void join_failed_due_to_overcrowding() {
         Challenge challengeFull = Challenge.builder()
                 .id(1L)
-                .userCount(3)
                 .userCountLimit(3)
                 .build();
         when(challengeRepository.findById(any())).thenReturn(Optional.of(challengeFull));
-
+        when(userChallengeRepository.countByChallengeId(any())).thenReturn(3);
         assertThatThrownBy(()->challengeService.join(1L,1L)).isInstanceOf(RuntimeException.class);
     }
 

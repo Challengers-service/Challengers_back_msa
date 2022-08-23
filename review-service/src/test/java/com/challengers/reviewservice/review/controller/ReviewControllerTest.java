@@ -4,6 +4,7 @@ import com.challengers.reviewservice.common.documentation.Documentation;
 import com.challengers.reviewservice.review.dto.ReviewRequest;
 import com.challengers.reviewservice.review.dto.ReviewResponse;
 import com.challengers.reviewservice.review.dto.ReviewUpdateRequest;
+import com.challengers.reviewservice.review.repository.ReviewRepository;
 import com.challengers.reviewservice.review.service.ReviewService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import java.util.Arrays;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -27,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = ReviewController.class)
 class ReviewControllerTest extends Documentation {
     @MockBean ReviewService reviewService;
+    @MockBean ReviewRepository reviewRepository;
 
     private ObjectMapper mapper;
 
@@ -104,6 +107,30 @@ class ReviewControllerTest extends Documentation {
                 .andDo(ReviewDocumentation.updateReview());
 
         verify(reviewService).update(any(),any(),any());
+    }
+
+    @Test
+    @DisplayName("특정 챌린지에 작성된 리뷰 개수를 요청한다.")
+    void getReviewCount() throws Exception{
+        when(reviewRepository.countByChallengeId(any())).thenReturn(2);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/reviews/count/{challengeId}", 1))
+                .andExpect(status().isOk())
+                .andDo(ReviewDocumentation.getReviewCount());
+
+        verify(reviewRepository).countByChallengeId(any());
+    }
+
+    @Test
+    @DisplayName("특정 챌린지의 평균 별점을 요청한다.")
+    void getStarRatingAvg() throws Exception{
+        when(reviewRepository.getStarRatingAvgByChallengeId(any())).thenReturn(3.5f);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/reviews/star_rating/{challengeId}", 1))
+                .andExpect(status().isOk())
+                .andDo(ReviewDocumentation.getStarRatingAvg());
+
+        verify(reviewRepository).getStarRatingAvgByChallengeId(any());
     }
 
 }

@@ -19,6 +19,8 @@ import com.challengers.challengeservice.userchallenge.domain.UserChallenge;
 import com.challengers.challengeservice.userchallenge.domain.UserChallengeStatus;
 import com.challengers.challengeservice.userchallenge.repository.UserChallengeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,7 @@ public class ChallengeService {
     private final ChallengePhotoRepository challengePhotoRepository;
     private final PointClient pointClient;
     private final ReviewClient reviewClient;
+    private final CircuitBreakerFactory circuitBreakerFactory;
 
     @Transactional
     public Long create(ChallengeRequest challengeRequest, Long userId) {
@@ -120,11 +123,15 @@ public class ChallengeService {
         }
         int maxProgress = ChallengeJoinManager.getMaxProgress(challenge);
 
+        CircuitBreaker circuitBreaker1 = circuitBreakerFactory.create("getStarRatingAvg");
+        CircuitBreaker circuitBreaker2 = circuitBreakerFactory.create("getReviewCount");
 
         return ChallengeDetailResponse.of(challenge,
                 userChallengeRepository.countByChallengeId(challengeId),
-                reviewClient.getStarRatingAvg(challengeId),
-                reviewClient.getReviewCount(challengeId),
+                circuitBreaker1.run(() ->reviewClient.getStarRatingAvg(challengeId),
+                        throwable -> 0.0f),
+                circuitBreaker2.run(() -> reviewClient.getReviewCount(challengeId),
+                        throwable -> 0),
                 cartRepository.findByChallengeIdAndUserId(challengeId, userId).isPresent(),
                 challenge.getFailedPoint()/(progress+maxProgress)*maxProgress);
     }

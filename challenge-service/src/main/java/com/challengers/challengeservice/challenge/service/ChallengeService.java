@@ -105,6 +105,8 @@ public class ChallengeService {
 
         cartRepository.findByChallengeId(challengeId).forEach(cartRepository::delete);
 
+        reviewClient.deleteReview(challengeId);
+
         pointClient.updateMyPoint(userId, new PointUpdateRequest((long)challenge.getDepositPoint(),"CANCEL"));
 
         challengeRepository.delete(challenge);

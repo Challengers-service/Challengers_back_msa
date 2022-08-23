@@ -63,4 +63,11 @@ public class ReviewController {
     public ResponseEntity<Float> getStarRatingAvg(@PathVariable(name = "challengeId") Long challengeId) {
         return ResponseEntity.ok(reviewRepository.getStarRatingAvgByChallengeId(challengeId));
     }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteReview(@RequestParam(name = "challengeId") Long challengeId) {
+        reviewService.delete(challengeId);
+
+        return ResponseEntity.ok().build();
+    }
 }

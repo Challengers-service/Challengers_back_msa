@@ -487,6 +487,27 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#resources-reviews-showReviews_response_fields">Response fields</a></li>
 </ul>
 </li>
+<li><a href="#resources-reviews-getReviewCount">리뷰 갯수 조회</a>
+<ul class="sectlevel2">
+<li><a href="#resources-reviews-getReviewCount_http_request">HTTP request</a></li>
+<li><a href="#resources-reviews-getReviewCount_path_parameters">Path parameters</a></li>
+<li><a href="#resources-reviews-getReviewCount_http_response">HTTP response</a></li>
+</ul>
+</li>
+<li><a href="#resources-reviews-getStarRatingAvg">리뷰 평균 별점 조회</a>
+<ul class="sectlevel2">
+<li><a href="#resources-reviews-getStarRatingAvg_http_request">HTTP request</a></li>
+<li><a href="#resources-reviews-getStarRatingAvg_path_parameters">Path parameters</a></li>
+<li><a href="#resources-reviews-getStarRatingAvg_http_response">HTTP response</a></li>
+</ul>
+</li>
+<li><a href="#resources-reviews-deleteByChallengeId">챌린지 ID로 리뷰 삭제</a>
+<ul class="sectlevel2">
+<li><a href="#resources-reviews-deleteByChallengeId_http_request">HTTP request</a></li>
+<li><a href="#resources-reviews-deleteByChallengeId_path_parameters">Path parameters</a></li>
+<li><a href="#resources-reviews-deleteByChallengeId_http_response">HTTP response</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -902,14 +923,14 @@ Content-Length: 1229
       "unsorted" : true
     },
     "offset" : 0,
-    "pageSize" : 6,
     "pageNumber" : 0,
+    "pageSize" : 6,
     "paged" : true,
     "unpaged" : false
   },
-  "last" : true,
-  "totalElements" : 2,
   "totalPages" : 1,
+  "totalElements" : 2,
+  "last" : true,
   "size" : 6,
   "number" : 0,
   "sort" : {
@@ -917,8 +938,8 @@ Content-Length: 1229
     "sorted" : false,
     "unsorted" : true
   },
-  "first" : true,
   "numberOfElements" : 2,
+  "first" : true,
   "empty" : false
 }</code></pre>
 </div>
@@ -1093,13 +1114,145 @@ Content-Length: 1229
 </tbody>
 </table>
 </div>
+<hr>
+<div class="paragraph">
+<p>p2p</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="resources-reviews-getReviewCount"><a class="link" href="#resources-reviews-getReviewCount">리뷰 갯수 조회</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>특정 챌린지에 작성된 리뷰 갯수를 조회한다.</p>
+</div>
+<div class="sect2">
+<h3 id="resources-reviews-getReviewCount_http_request"><a class="link" href="#resources-reviews-getReviewCount_http_request">HTTP request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/reviews/count/1 HTTP/1.1
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="resources-reviews-getReviewCount_path_parameters"><a class="link" href="#resources-reviews-getReviewCount_path_parameters">Path parameters</a></h3>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/reviews/count/{challengeId}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>challengeId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 챌린지 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="resources-reviews-getReviewCount_http_response"><a class="link" href="#resources-reviews-getReviewCount_http_response">HTTP response</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 1
+
+2</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="resources-reviews-getStarRatingAvg"><a class="link" href="#resources-reviews-getStarRatingAvg">리뷰 평균 별점 조회</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>특정 챌린지의 평균 별점을 조회한다.</p>
+</div>
+<div class="sect2">
+<h3 id="resources-reviews-getStarRatingAvg_http_request"><a class="link" href="#resources-reviews-getStarRatingAvg_http_request">HTTP request</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">GET /api/reviews/star_rating/1 HTTP/1.1
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="resources-reviews-getStarRatingAvg_path_parameters"><a class="link" href="#resources-reviews-getStarRatingAvg_path_parameters">Path parameters</a></h3>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/reviews/star_rating/{challengeId}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>challengeId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 챌린지 ID</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="resources-reviews-getStarRatingAvg_http_response"><a class="link" href="#resources-reviews-getStarRatingAvg_http_response">HTTP response</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code data-lang="http" class="language-http hljs">HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 3
+
+3.5</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="resources-reviews-deleteByChallengeId"><a class="link" href="#resources-reviews-deleteByChallengeId">챌린지 ID로 리뷰 삭제</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>특정 챌린지에 작성된 모든 리뷰들을 삭제한다.</p>
+</div>
+<div class="sect2">
+<h3 id="resources-reviews-deleteByChallengeId_http_request"><a class="link" href="#resources-reviews-deleteByChallengeId_http_request">HTTP request</a></h3>
+<div class="paragraph">
+<p>Snippet http-request not found for operation::reviews/deleteB</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="resources-reviews-deleteByChallengeId_path_parameters"><a class="link" href="#resources-reviews-deleteByChallengeId_path_parameters">Path parameters</a></h3>
+<div class="paragraph">
+<p>Snippet path-parameters not found for operation::reviews/deleteB</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="resources-reviews-deleteByChallengeId_http_response"><a class="link" href="#resources-reviews-deleteByChallengeId_http_response">HTTP response</a></h3>
+<div class="paragraph">
+<p>Snippet http-response not found for operation::reviews/deleteB</p>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2022-08-02 17:48:29 +0900
+Last updated 2022-08-23 17:08:56 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">

@@ -47,3 +47,10 @@ operation::reviews/getReviewCount[snippets='http-request,path-parameters,http-re
 특정 챌린지의 평균 별점을 조회한다.
 
 operation::reviews/getStarRatingAvg[snippets='http-request,path-parameters,http-response']
+
+[[resources-reviews-deleteByChallengeId]]
+== 챌린지 ID로 리뷰 삭제
+
+특정 챌린지에 작성된 모든 리뷰들을 삭제한다.
+
+operation::reviews/deleteReviewsByChallengeId[snippets='http-request,request-parameters,http-response']

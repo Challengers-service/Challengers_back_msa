@@ -8,6 +8,8 @@ import com.challengers.challengeservice.challenge.repository.ChallengeRepository
 import com.challengers.challengeservice.challengephoto.repository.ChallengePhotoRepository;
 import com.challengers.challengeservice.challengetag.domain.ChallengeTag;
 import com.challengers.challengeservice.common.AwsS3Uploader;
+import com.challengers.challengeservice.global.client.PointClient;
+import com.challengers.challengeservice.global.dto.PointUpdateRequest;
 import com.challengers.challengeservice.photocheck.repository.PhotoCheckRepository;
 import com.challengers.challengeservice.tag.domain.Tag;
 import com.challengers.challengeservice.tag.repository.TagRepository;
@@ -35,11 +37,11 @@ public class ChallengeService {
     private final CartRepository cartRepository;
     private final PhotoCheckRepository photoCheckRepository;
     private final ChallengePhotoRepository challengePhotoRepository;
+    private final PointClient pointClient;
 
 
     @Transactional
     public Long create(ChallengeRequest challengeRequest, Long userId) {
-        // host의 포인트를 예치포인트만큼 감소시켜야함
         // challenge 시작일, 종료일이 올바르지 않을 경우 에러 반환시켜야함
 
         String imageUrl = "https://challengers-bucket.s3.ap-northeast-2.amazonaws.com/challengeDefaultImage.jpg";
@@ -55,6 +57,8 @@ public class ChallengeService {
 
         userChallengeRepository.save(UserChallenge.create(challenge,userId));
 
+        pointClient.updateMyPoint(userId, new PointUpdateRequest(challengeRequest.getDepositPoint() * -1L,"DEPOSIT"));
+        
         /*
         host.update(host.getChallengeCount() + 1);
 
@@ -97,6 +101,8 @@ public class ChallengeService {
 
         cartRepository.findByChallengeId(challengeId).forEach(cartRepository::delete);
 
+        pointClient.updateMyPoint(userId, new PointUpdateRequest((long)challenge.getDepositPoint(),"CANCEL"));
+
         challengeRepository.delete(challenge);
     }
 
@@ -137,6 +143,7 @@ public class ChallengeService {
         updateChallengeAchievement(user);
 
          */
+        pointClient.updateMyPoint(userId, new PointUpdateRequest(challenge.getDepositPoint()*-1L,"DEPOSIT"));
 
         userChallengeRepository.save(UserChallenge.create(challenge, userId));
     }

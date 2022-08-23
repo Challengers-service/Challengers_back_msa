@@ -9,6 +9,7 @@ import com.challengers.challengeservice.challenge.dto.*;
 import com.challengers.challengeservice.challenge.repository.ChallengeRepository;
 import com.challengers.challengeservice.challengephoto.repository.ChallengePhotoRepository;
 import com.challengers.challengeservice.common.AwsS3Uploader;
+import com.challengers.challengeservice.global.client.PointClient;
 import com.challengers.challengeservice.photocheck.repository.PhotoCheckRepository;
 import com.challengers.challengeservice.tag.domain.Tag;
 import com.challengers.challengeservice.tag.repository.TagRepository;
@@ -46,6 +47,7 @@ public class ChallengeServiceTest {
     @Mock CartRepository cartRepository;
     @Mock PhotoCheckRepository photoCheckRepository;
     @Mock ChallengePhotoRepository challengePhotoRepository;
+    @Mock PointClient pointClient;
 
     ChallengeService challengeService;
 
@@ -55,7 +57,7 @@ public class ChallengeServiceTest {
     @BeforeEach
     void setUp() {
         challengeService = new ChallengeService(challengeRepository,tagRepository,userChallengeRepository,
-                awsS3Uploader,cartRepository,photoCheckRepository,challengePhotoRepository);
+                awsS3Uploader,cartRepository,photoCheckRepository,challengePhotoRepository, pointClient);
 
         challengeRequest = ChallengeRequest.builder()
                 .name("미라클 모닝 - 아침 7시 기상")

@@ -4,7 +4,7 @@ import com.challengers.pointservice.point.domain.Point;
 import com.challengers.pointservice.point.domain.PointTransactionType;
 import com.challengers.pointservice.point.dto.PointTransactionResponse;
 import com.challengers.pointservice.point.dto.PointResponse;
-import com.challengers.pointservice.point.dto.PointUpdateRequest;
+import com.challengers.pointservice.point.global.dto.PointUpdateRequest;
 import com.challengers.pointservice.point.repository.PointTransactionRepository;
 import com.challengers.pointservice.point.repository.PointRepository;
 import org.junit.jupiter.api.BeforeEach;

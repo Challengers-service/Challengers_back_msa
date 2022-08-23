@@ -3,7 +3,7 @@ package com.challengers.pointservice.point.controller;
 
 import com.challengers.pointservice.point.dto.PointTransactionResponse;
 import com.challengers.pointservice.point.dto.PointResponse;
-import com.challengers.pointservice.point.dto.PointUpdateRequest;
+import com.challengers.pointservice.point.global.dto.PointUpdateRequest;
 import com.challengers.pointservice.point.global.dto.GiveRewardDto;
 import com.challengers.pointservice.point.service.PointService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class PointController {
 
     // p2p api [request only other microservices]
 
-    @PutMapping
+    @PutMapping("/global")
     public ResponseEntity<Void> updateMyPoint(@RequestBody PointUpdateRequest pointUpdateRequest,
                                               @RequestHeader(name = "userId") Long userId) {
         pointService.updatePoint(userId, pointUpdateRequest);

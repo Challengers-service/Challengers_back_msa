@@ -1,4 +1,4 @@
-package com.challengers.pointservice.point.dto;
+package com.challengers.pointservice.point.global.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -4,7 +4,7 @@ import com.challengers.pointservice.common.documentation.Documentation;
 import com.challengers.pointservice.point.domain.PointTransactionType;
 import com.challengers.pointservice.point.dto.PointTransactionResponse;
 import com.challengers.pointservice.point.dto.PointResponse;
-import com.challengers.pointservice.point.dto.PointUpdateRequest;
+import com.challengers.pointservice.point.global.dto.PointUpdateRequest;
 import com.challengers.pointservice.point.service.PointService;
 import com.challengers.pointservice.testtool.StringToken;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -52,6 +52,9 @@ public class ChallengeServiceTest {
     @Mock ChallengePhotoRepository challengePhotoRepository;
     @Mock PointClient pointClient;
     @Mock ReviewClient reviewClient;
+    @Mock CircuitBreakerFactory circuitBreakerFactory;
+    @Mock CircuitBreaker circuitBreaker1;
+    @Mock CircuitBreaker circuitBreaker2;
 
     ChallengeService challengeService;
 
@@ -61,7 +64,7 @@ public class ChallengeServiceTest {
     @BeforeEach
     void setUp() {
         challengeService = new ChallengeService(challengeRepository,tagRepository,userChallengeRepository,
-                awsS3Uploader,cartRepository,photoCheckRepository,challengePhotoRepository, pointClient, reviewClient);
+                awsS3Uploader,cartRepository,photoCheckRepository,challengePhotoRepository, pointClient, reviewClient, circuitBreakerFactory);
 
         challengeRequest = ChallengeRequest.builder()
                 .name("미라클 모닝 - 아침 7시 기상")
@@ -190,8 +193,10 @@ public class ChallengeServiceTest {
         when(userChallengeRepository.findByChallengeIdAndStatus(any(),any())).thenReturn(new ArrayList<>());
         when(cartRepository.findByChallengeIdAndUserId(any(),any())).thenReturn(Optional.empty());
         when(userChallengeRepository.countByChallengeId(any())).thenReturn(5);
-        when(reviewClient.getReviewCount(any())).thenReturn(3);
-        when(reviewClient.getStarRatingAvg(any())).thenReturn(3.5f);
+        when(circuitBreakerFactory.create("getReviewCount")).thenReturn(circuitBreaker1);
+        when(circuitBreakerFactory.create("getStarRatingAvg")).thenReturn(circuitBreaker2);
+        when(circuitBreaker1.run(any(),any())).thenReturn(3);
+        when(circuitBreaker2.run(any(),any())).thenReturn(3.5f);
 
         ChallengeDetailResponse response = challengeService.findChallenge(1L, 1L);
 
